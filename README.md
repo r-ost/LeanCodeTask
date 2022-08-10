@@ -28,7 +28,7 @@ Application runs on http://localhost:8080
 
 By default application uses _r/poland_ subbreddit. In order to change the subrreddit
 you have to change the value in _appsettings.json_.
-```json
+```
 "RedditApi": {
     ...
     "Subreddit": "<type subreddit name e.g. bitcoin>"
