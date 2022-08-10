@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace LeanCodeTask.WebApi.Models;
+namespace LeanCodeTask.WebApi.Database.Models;
 
 public class RedditImage
 {
