@@ -1,0 +1,24 @@
+version: '3.4'
+
+services:
+  webapi:
+    image: leancodetask-webapi
+    build:
+      context: .
+      dockerfile: LeanCodeTask.WebApi/Dockerfile
+    environment:
+      - "RedditImagesDatabase__ConnectionString=mongodb://reddit-images-db:27017"
+      - "RedditApi__ClientSecret=${RedditApi__ClientSecret}"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - reddit-images-db
+    restart: on-failure
+
+  reddit-images-db:
+    image: "mongo:latest"
+    container_name: reddit-images-db
+    volumes:
+      - ~/apps/mongo:/data/db
+    ports:
+      - "27017:27017"
