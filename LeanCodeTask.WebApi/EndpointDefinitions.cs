@@ -6,6 +6,7 @@ using LeanCodeTask.WebApi.RedditApiClient;
 using LeanCodeTask.WebApi.RedditApiClient.Responses;
 using LeanCodeTask.WebApi.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace LeanCodeTask.WebApi;
 
@@ -20,13 +21,14 @@ public static class EndpointDefinitions
     private static async Task<IResult> GetRandomRedditImage(
         [FromServices] IRedditApiClient redditApi,
         [FromServices] IRedditImagesRepository repo,
-        [FromServices] IDateTimeProvider dateTimeProvider)
+        [FromServices] IDateTimeProvider dateTimeProvider,
+        [FromServices] IOptions<RedditApiSettings> redditApiSettings)
     {
-        var apiResponse = await redditApi.GetHotPostsAsync();
+        var apiResponse = await redditApi.GetHotPostsAsync(redditApiSettings.Value.Subreddit);
         var image = GetImageFromApiResponse(apiResponse);
         await CreateImageRetrievalRecordInDatabase(image, repo, dateTimeProvider);
         
-        return Results.Ok(new { imageUrl = image.Source.Url });
+        return Results.Ok(new { imageUrl = HttpUtility.HtmlDecode(image.Source.Url) });
     }
 
     
