@@ -1,8 +1,9 @@
+using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Web;
+using LeanCodeTask.WebApi.Database.Repositories;
 using LeanCodeTask.WebApi.RedditApiClient;
 using LeanCodeTask.WebApi.RedditApiClient.Responses;
-using LeanCodeTask.WebApi.Repositories;
 using LeanCodeTask.WebApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,26 +23,13 @@ public static class EndpointDefinitions
         [FromServices] IDateTimeProvider dateTimeProvider)
     {
         var apiResponse = await redditApi.GetHotPostsAsync();
-        var children = apiResponse.Data.Children.ToList();
-        Image? image = null;
-        while(image is null)
-        {
-            image = children[RandomNumberGenerator.GetInt32(0, children.Count)].Data.Preview?.Images?.FirstOrDefault();
-        }
-
-        var imageUrl = HttpUtility.HtmlDecode(image!.Source.Url);
-        await repo.CreateAsync(new()
-        {
-            ImageUrl = imageUrl,
-            RetrievalDate = dateTimeProvider.GetCurrentDateTimeUTC()
-        });
-    
-        return Results.Ok(new
-        {
-            imageUrl
-        });
+        var image = GetImageFromApiResponse(apiResponse);
+        await CreateImageRetrievalRecordInDatabase(image, repo, dateTimeProvider);
+        
+        return Results.Ok(new { imageUrl = image.Source.Url });
     }
 
+    
     private static async Task<IResult> GetImagesHistory([FromServices] IRedditImagesRepository repo)
     {
         var images = await repo.GetAsync();
@@ -52,5 +40,30 @@ public static class EndpointDefinitions
         
         return Results.Ok(result);
     }
+
     
+    private static Image GetImageFromApiResponse(HotPostsResponse apiResponse)
+    {
+        var children = apiResponse.Data.Children.ToList();
+        Image? image = null;
+        while(image is null)
+        {
+            image = children[RandomNumberGenerator.GetInt32(0, children.Count)].Data.Preview?.Images?.FirstOrDefault();
+        }
+
+        return image;
+    }
+
+    
+    private static async Task CreateImageRetrievalRecordInDatabase(Image image,
+        IRedditImagesRepository repo,
+        IDateTimeProvider dateTimeProvider)
+    {
+        var imageUrl = HttpUtility.HtmlDecode(image.Source.Url);
+        await repo.CreateAsync(new()
+        {
+            ImageUrl = imageUrl,
+            RetrievalDate = dateTimeProvider.GetCurrentDateTimeUTC()
+        });
+    }
 }

@@ -1,4 +1,4 @@
-using LeanCodeTask.WebApi.Repositories;
+using LeanCodeTask.WebApi.Database.Repositories;
 using LeanCodeTask.WebApi.Utils;
 
 namespace LeanCodeTask.WebApi.Database;

@@ -1,9 +1,8 @@
-using LeanCodeTask.WebApi.Database;
 using LeanCodeTask.WebApi.Database.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace LeanCodeTask.WebApi.Repositories;
+namespace LeanCodeTask.WebApi.Database.Repositories;
 
 public interface IRedditImagesRepository
 {
