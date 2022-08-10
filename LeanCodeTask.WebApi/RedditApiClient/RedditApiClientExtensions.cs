@@ -25,6 +25,8 @@ public static class RedditApiClientExtensions
             })
             .AddClientAccessTokenHandler("reddit-api");
 
+        services.Configure<RedditApiSettings>(configuration.GetSection("RedditApi"));
+
         return services;
     }
 }

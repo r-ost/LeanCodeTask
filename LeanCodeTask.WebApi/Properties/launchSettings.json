@@ -2,10 +2,7 @@
   "profiles": {
     "LeanCodeTask.WebApi": {
       "commandName": "Project",
-      "applicationUrl": "http://localhost:8080",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      "applicationUrl": "http://localhost:8080"
     }
   }
 }
